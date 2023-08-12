@@ -11,6 +11,7 @@
   "scripts": {
     "demo": "npx ts-node --project tsconfig.json src/demo.ts",
     "build": "npx tsc",
+    "clean:win32": "del -Force build/",
     "clean": "rm -rf build/",
     "prepare": "npm run clean && npm run build",
     "lint": "npx eslint src"
