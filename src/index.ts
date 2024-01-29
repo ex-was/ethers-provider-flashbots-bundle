@@ -380,7 +380,7 @@ export class FlashbotsBundleProvider extends providers.JsonRpcProvider {
       revertingTxHashes: opts?.revertingTxHashes,
       replacementUuid: opts?.replacementUuid,
       refundPercent: opts?.refundPercent,
-      refundRecipient: opts?.refundPercent
+      refundRecipient: opts?.refundRecipient
     }
 
     const request = JSON.stringify(this.prepareRelayRequest('eth_sendBundle', [params]))
