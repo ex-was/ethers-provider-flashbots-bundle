@@ -42,7 +42,9 @@ export interface FlashbotsOptions {
   minTimestamp?: number
   maxTimestamp?: number
   revertingTxHashes?: Array<string>
-  replacementUuid?: string
+  replacementUuid?: string,
+  refundPercent?: number,
+  refundRecipient?: string
 }
 
 export interface TransactionAccountNonce {
@@ -376,7 +378,9 @@ export class FlashbotsBundleProvider extends providers.JsonRpcProvider {
       minTimestamp: opts?.minTimestamp,
       maxTimestamp: opts?.maxTimestamp,
       revertingTxHashes: opts?.revertingTxHashes,
-      replacementUuid: opts?.replacementUuid
+      replacementUuid: opts?.replacementUuid,
+      refundPercent: opts?.refundPercent,
+      refundRecipient: opts?.refundPercent
     }
 
     const request = JSON.stringify(this.prepareRelayRequest('eth_sendBundle', [params]))
