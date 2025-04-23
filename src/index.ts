@@ -239,6 +239,7 @@ export class FlashbotsBundleProvider extends providers.JsonRpcProvider {
   private genericProvider: BaseProvider
   private authSigner: Signer
   private connectionInfo: ConnectionInfo
+  private _nextId: number = 0
 
   constructor(genericProvider: BaseProvider, authSigner: Signer, connectionInfoOrUrl: ConnectionInfo, network: Networkish) {
     super(connectionInfoOrUrl, network)
@@ -648,7 +649,7 @@ export class FlashbotsBundleProvider extends providers.JsonRpcProvider {
         }
 
         if (timer) {
-          clearTimeout(timer)
+          clearTimeout(timer as any as number)
         }
         if (done) {
           return
@@ -704,7 +705,7 @@ export class FlashbotsBundleProvider extends providers.JsonRpcProvider {
         }
 
         if (timer) {
-          clearTimeout(timer)
+          clearTimeout(timer as any as number)
         }
         if (done) {
           return
