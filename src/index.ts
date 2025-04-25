@@ -46,7 +46,8 @@ export interface FlashbotsOptions {
   refundPercent?: number,
   refundRecipient?: string,
   refundTxHashes?: string[],
-  refundIndex?: number
+  refundIndex?: number,
+  sign?: string // for BSC https://docs.48.club/puissant-builder/send-bundle#request-parameters
 }
 
 export interface TransactionAccountNonce {
@@ -374,7 +375,7 @@ export class FlashbotsBundleProvider extends providers.JsonRpcProvider {
     targetBlockNumber: number,
     opts?: FlashbotsOptions
   ): Promise<FlashbotsTransaction> {
-    const params = {
+    const params: any = {
       txs: signedBundledTransactions,
       blockNumber: `0x${targetBlockNumber.toString(16)}`,
       minTimestamp: opts?.minTimestamp,
@@ -385,6 +386,10 @@ export class FlashbotsBundleProvider extends providers.JsonRpcProvider {
       refundRecipient: opts?.refundRecipient,
       refundTxHashes: opts?.refundTxHashes,
       refundIndex: opts?.refundIndex
+    }
+
+    if(opts && 'sign' in opts) {
+      params['48spSign'] = opts.sign;
     }
 
     const request = JSON.stringify(this.prepareRelayRequest('eth_sendBundle', [params]))
