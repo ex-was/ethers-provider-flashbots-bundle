@@ -47,7 +47,7 @@ export interface FlashbotsOptions {
   refundRecipient?: string,
   refundTxHashes?: string[],
   refundIndex?: number,
-  sign?: string // for BSC https://docs.48.club/puissant-builder/send-bundle#request-parameters
+  reference?: Record<string, any> // for any custom field
 }
 
 export interface TransactionAccountNonce {
@@ -388,8 +388,10 @@ export class FlashbotsBundleProvider extends providers.JsonRpcProvider {
       refundIndex: opts?.refundIndex
     }
 
-    if(opts && 'sign' in opts) {
-      params['48spSign'] = opts.sign;
+    if(opts && opts?.reference) {
+      for(const [key, value] of Object.entries(opts.reference)) {
+        params[key] = value;
+      }
     }
 
     const request = JSON.stringify(this.prepareRelayRequest('eth_sendBundle', [params]))
