@@ -51,6 +51,11 @@ export interface FlashbotsOptions {
   maxTimestamp?: number
   revertingTxHashes?: Array<string>
   replacementUuid?: string
+  refundPercent?: number
+  refundRecipient?: string
+  refundTxHashes?: string[]
+  refundIndex?: number
+  reference?: Record<string, any> // for any custom field
 }
 
 export interface TransactionAccountNonce {
@@ -377,13 +382,22 @@ export class FlashbotsBundleProvider extends AbstractProvider {
     targetBlockNumber: number,
     opts?: FlashbotsOptions
   ): Promise<FlashbotsTransaction> {
-    const params = {
+    const params: any = {
       txs: signedBundledTransactions,
       blockNumber: `0x${targetBlockNumber.toString(16)}`,
       minTimestamp: opts?.minTimestamp,
       maxTimestamp: opts?.maxTimestamp,
       revertingTxHashes: opts?.revertingTxHashes,
-      replacementUuid: opts?.replacementUuid
+      replacementUuid: opts?.replacementUuid,
+      refundRecipient: opts?.refundRecipient,
+      refundTxHashes: opts?.refundTxHashes,
+      refundIndex: opts?.refundIndex
+    }
+
+    if (opts && opts?.reference) {
+      for (const [key, value] of Object.entries(opts.reference)) {
+        params[key] = value
+      }
     }
 
     const request = JSON.stringify(this.prepareRelayRequest('eth_sendBundle', [params]))
@@ -595,7 +609,7 @@ export class FlashbotsBundleProvider extends AbstractProvider {
           ? transaction.nonce
           : nonces[address] ?? (await this.genericProvider.getTransactionCount(address, 'latest'))
       nonces[address] = nonce + 1
-      if (transaction.nonce === undefined && transaction.nonce !== null) transaction.nonce = nonce
+      if (transaction.nonce === undefined) transaction.nonce = nonce
       if ((transaction.type == null || transaction.type == 0) && transaction.gasPrice === undefined) transaction.gasPrice = 0n
       if (transaction.gasLimit === undefined) transaction.gasLimit = await tx.signer.estimateGas(transaction) // TODO: Add target block number and timestamp when supported by geth
       signedTransactions.push(await tx.signer.signTransaction(transaction))
